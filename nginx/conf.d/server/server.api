@@ -246,6 +246,11 @@ location /skynet/skyfile {
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
         end
+
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
+        end
     }
 }
 
@@ -331,6 +336,11 @@ location /skynet/tus {
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
         end
+
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
+        end
     }
 }
 
@@ -366,6 +376,11 @@ location /skynet/pin {
 
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
+        end
+
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
         end
     }
 }
@@ -460,6 +475,11 @@ location /skynet/trustless/basesector {
 
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
+        end
+
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
         end
     }
 }
