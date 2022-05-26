@@ -10,9 +10,12 @@ RUN apt-get update && apt-get --no-install-recommends -y install bc=1.07.1-2buil
 # reload nginx every 6 hours (for reloading certificates)
 ENV NGINX_ENTRYPOINT_RELOAD_EVERY_X_HOURS 6
 
-# copy entrypoint and entrypoint scripts
-COPY docker/nginx/docker-entrypoint.sh /
-COPY docker/nginx/docker-entrypoint.d /docker-entrypoint.d
+# copy entrypoint scripts
+COPY entrypoint /
+
+# copy nginx configuration files
+COPY nginx /etc/nginx/
+COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
