@@ -246,6 +246,13 @@ location /skynet/skyfile {
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
         end
+
+        -- when pinner module is enabled, call its /pin endpoint on file upload
+        -- to mark the resulting skylink as being pinned by current server in pinner db
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
+        end
     }
 }
 
@@ -331,6 +338,13 @@ location /skynet/tus {
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
         end
+
+        -- when pinner module is enabled, call its /pin endpoint on file upload
+        -- to mark the resulting skylink as being pinned by current server in pinner db
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
+        end
     }
 }
 
@@ -366,6 +380,13 @@ location /skynet/pin {
 
         if skynet_modules.is_enabled("s") then
             skynet_scanner.scan_skylink(ngx.header["Skynet-Skylink"])
+        end
+
+        -- when pinner module is enabled, call its /pin endpoint on file pin request
+        -- to mark the pinned skylink as being pinned by current server in pinner db
+        if skynet_modules.is_enabled("p") then
+            local skynet_pinner = require("skynet.pinner")
+            skynet_pinner.pin_skylink(ngx.header["Skynet-Skylink"])
         end
     }
 }
