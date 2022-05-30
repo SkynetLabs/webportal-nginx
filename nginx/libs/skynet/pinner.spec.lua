@@ -64,7 +64,7 @@ describe("pin_skylink_timer", function()
         assert.stub(ngx.log).was_not_called()
     end)
 
-    it("should make a post request with skylink to scanner service", function()
+    it("should make a post request with skylink to pinner service", function()
         local resty_http = require("resty.http")
         local request_uri = spy.new(function()
             return { status = 204 } -- return 204 no content
@@ -83,7 +83,7 @@ describe("pin_skylink_timer", function()
         assert.stub(ngx.log).was_not_called()
     end)
 
-    it("should log message on scanner request failure with response code", function()
+    it("should log message on pinner request failure with response code", function()
         local resty_http = require("resty.http")
         local request_uri = spy.new(function()
             return { status = 404, body = "baz" } -- return 404 failure
@@ -105,7 +105,7 @@ describe("pin_skylink_timer", function()
         )
     end)
 
-    it("should log message on scanner request error", function()
+    it("should log message on pinner request error", function()
         local resty_http = require("resty.http")
         local request_uri = spy.new(function()
             return nil, "foo != bar" -- return error
