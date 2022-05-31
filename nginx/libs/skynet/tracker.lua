@@ -65,35 +65,4 @@ function _M.track_upload(skylink, status_code, auth_headers, uploader_ip)
     end
 end
 
-function _M.track_registry_timer(premature, auth_headers, request_method)
-    if premature then return end
-
-    local httpc = require("resty.http").new()
-
-    -- based on request method we assign a registry action string used
-    -- in track endpoint namely "read" for GET and "write" for POST
-    local registry_action = request_method == "GET" and "read" or "write"
-
-    -- 10.10.10.70 points to accounts service (alias not available when using resty-http)
-    local res, err = httpc:request_uri("http://10.10.10.70:3000/track/registry/" .. registry_action, {
-        method = "POST",
-        headers = auth_headers,
-    })
-
-    if err or (res and res.status ~= 204) then
-        local error_response = err or ("[HTTP " .. res.status .. "] " .. res.body)
-        ngx.log(ngx.ERR, "Failed accounts service request /track/registry/" .. registry_action .. ": ", error_response)
-    end
-end
-
-function _M.track_registry(status_code, auth_headers, request_method)
-    local has_auth_headers = not utils.is_table_empty(auth_headers)
-    local tracked_status = status_code == 200 or status_code == 404
-
-    if tracked_status and has_auth_headers then
-        local ok, err = ngx.timer.at(0, _M.track_registry_timer, auth_headers, request_method)
-        if not ok then ngx.log(ngx.ERR, "Failed to create timer: ", err) end
-    end
-end
-
 return _M
