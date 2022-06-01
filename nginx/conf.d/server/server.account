@@ -3,13 +3,8 @@ listen 443 ssl http2;
 include /etc/nginx/conf.d/include/ssl-settings;
 include /etc/nginx/conf.d/include/init-optional-variables;
 
-# Uncomment to launch new Dashboard under /v2 path 
-# location /v2 {
-#   proxy_pass http://dashboard-v2:9000;
-# }
-
 location / {
-    proxy_pass http://dashboard:3000;
+    proxy_pass http://dashboard:9000;
 }
 
 location /health {
@@ -18,14 +13,6 @@ location /health {
 
 location /stripe/webhook {
     proxy_pass http://accounts:3000;
-}
-
-location /api/stripe/billing {
-    proxy_pass http://dashboard:3000;
-}
-
-location /api/stripe/checkout {
-    proxy_pass http://dashboard:3000;
 }
 
 location /api {
