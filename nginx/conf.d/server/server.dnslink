@@ -24,8 +24,12 @@ location / {
                     ngx.var.path = match_skylink[2] or "/"
                 else
                     ngx.status = (err and ngx.HTTP_INTERNAL_SERVER_ERROR) or res.status
-                    ngx.header["content-type"] = "text/plain"
-                    ngx.say(err or res.body)
+                    -- do not send response on unauthorized error (status code 401)
+                    -- otherwise we will not be able to display custom error page
+                    if ngx.status != ngx.HTTP_UNAUTHORIZED then
+                        ngx.header["content-type"] = "text/plain"
+                        ngx.say(err or res.body)
+                    end
                     ngx.exit(ngx.status)
                 end
             else
