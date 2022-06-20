@@ -13,11 +13,15 @@ rewrite_by_lua_block {
     -- 10.10.10.50 points to handshake-api service (alias not available when using resty-http)
     local hnsres_res, hnsres_err = httpc:request_uri("http://10.10.10.50:3100/hnsres/" .. ngx.var.hns_domain)
 
-    -- print error and exit with 500 or exit with response if status is not 200
+    -- exit with 500 or exit with response if status is not 200
     if hnsres_err or (hnsres_res and hnsres_res.status ~= ngx.HTTP_OK) then
         ngx.status = (hnsres_err and ngx.HTTP_INTERNAL_SERVER_ERROR) or hnsres_res.status
-        ngx.header["content-type"] = "text/plain"
-        ngx.say(hnsres_err or hnsres_res.body)
+        -- do not send response on unauthorized error (status code 401)
+        -- otherwise we will not be able to display custom error page
+        if ngx.status != ngx.HTTP_UNAUTHORIZED then
+            ngx.header["content-type"] = "text/plain"
+            ngx.say(hnsres_err or hnsres_res.body)
+        end
         return ngx.exit(ngx.status)
     end
 
@@ -46,11 +50,15 @@ rewrite_by_lua_block {
             headers = { ["User-Agent"] = "Sia-Agent" }
         })
 
-        -- print error and exit with 500 or exit with response if status is not 200
+        -- exit with 500 or exit with response if status is not 200
         if registry_err or (registry_res and registry_res.status ~= ngx.HTTP_OK) then
             ngx.status = (registry_err and ngx.HTTP_INTERNAL_SERVER_ERROR) or registry_res.status
-            ngx.header["content-type"] = "text/plain"
-            ngx.say(registry_err or registry_res.body)
+            -- do not send response on unauthorized error (status code 401)
+            -- otherwise we will not be able to display custom error page
+            if ngx.status != ngx.HTTP_UNAUTHORIZED then
+                ngx.header["content-type"] = "text/plain"
+                ngx.say(registry_err or registry_res.body)
+            end
             return ngx.exit(ngx.status)
         end
 
