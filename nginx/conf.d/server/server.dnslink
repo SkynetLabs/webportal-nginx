@@ -26,7 +26,7 @@ location / {
                     ngx.status = (err and ngx.HTTP_INTERNAL_SERVER_ERROR) or res.status
                     -- do not send response on unauthorized error (status code 401)
                     -- otherwise we will not be able to display custom error page
-                    if ngx.status != ngx.HTTP_UNAUTHORIZED then
+                    if ngx.status ~= ngx.HTTP_UNAUTHORIZED then
                         ngx.header["content-type"] = "text/plain"
                         ngx.say(err or res.body)
                     end
