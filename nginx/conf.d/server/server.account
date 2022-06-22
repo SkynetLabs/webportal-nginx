@@ -4,6 +4,15 @@ include /etc/nginx/conf.d/include/ssl-settings;
 include /etc/nginx/conf.d/include/init-optional-variables;
 
 location / {
+    rewrite_by_lua_block {
+        local skynet_account = require("skynet.account")
+
+        if skynet_account.accounts_disabled() and skynet_account.should_redirect_for_disabled_accounts() then
+            local utils = require("utils")
+            return ngx.redirect(utils.getenv("DISABLED_ACCOUNTS_REDIRECT_URL"))
+        end
+    }
+
     proxy_pass http://dashboard:9000;
 }
 
