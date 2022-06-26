@@ -99,10 +99,10 @@ describe("should_redirect_accounts", function()
             skynet_account.accounts_enabled.returns(false)
         end)
 
-        it("should return true", function()
+        it("should return true despite there not being a redirect URL configured", function()
             os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns(nil)
 
-            assert.is_false(skynet_account.should_redirect_accounts())
+            assert.is_true(skynet_account.should_redirect_accounts())
         end)
     end)
 end)
