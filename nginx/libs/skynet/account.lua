@@ -42,12 +42,12 @@ function _M.get_auth_headers()
     return headers
 end
 
--- check whether there is a redirect URL configured for when accounts module
--- is disabled on a portal.
-function _M.should_redirect_for_disabled_accounts()
+-- check whether there is a redirect URL configured for "account" subdomain.
+function _M.should_redirect_accounts()
     local utils = require('utils')
+    local has_redirect_url = utils.getenv("ACCOUNTS_REDIRECT_URL") ~= nil
 
-    return utils.getenv("DISABLED_ACCOUNTS_REDIRECT_URL") ~= nil
+    return has_redirect_url or _M.accounts_disabled()
 end
 
 -- handle request exit when access to portal should be restricted to authenticated users only

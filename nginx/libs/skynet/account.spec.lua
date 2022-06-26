@@ -59,30 +59,50 @@ describe("accounts_disabled", function()
     end)
 end)
 
-describe("should_redirect_for_disabled_accounts", function()
+describe("should_redirect_accounts", function()
     before_each(function()
         stub(os, "getenv")
+        stub(skynet_account, "accounts_enabled")
     end)
 
     after_each(function()
         os.getenv:revert()
+        mock.revert(skynet_account)
     end)
 
-    it("should return false for not existing env var", function()
-        os.getenv.on_call_with("DISABLED_ACCOUNTS_REDIRECT_URL").returns(nil)
+    describe("when accounts are enabled", function ()
+        before_each(function ()
+            skynet_account.accounts_enabled.returns(true)
+        end)
 
-        assert.is_false(skynet_account.should_redirect_for_disabled_accounts())
+        it("should return false for not existing env var", function()
+            os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns(nil)
+
+            assert.is_false(skynet_account.should_redirect_accounts())
+        end)
+
+        it("should return false for blank env var", function()
+            os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns("")
+
+            assert.is_false(skynet_account.should_redirect_accounts())
+        end)
+
+        it("should return true for blank env var", function()
+            os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns("https://siasky.net/siasky-account-notice")
+
+            assert.is_true(skynet_account.should_redirect_accounts())
+        end)
     end)
 
-    it("should return false for blank env var", function()
-        os.getenv.on_call_with("DISABLED_ACCOUNTS_REDIRECT_URL").returns("")
+    describe("when accounts are disabled", function ()
+        before_each(function ()
+            skynet_account.accounts_enabled.returns(false)
+        end)
 
-        assert.is_false(skynet_account.should_redirect_for_disabled_accounts())
-    end)
+        it("should return true", function()
+            os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns(nil)
 
-    it("should return true for blank env var", function()
-        os.getenv.on_call_with("DISABLED_ACCOUNTS_REDIRECT_URL").returns("https://siasky.net/siasky-account-notice")
-
-        assert.is_true(skynet_account.should_redirect_for_disabled_accounts())
+            assert.is_false(skynet_account.should_redirect_accounts())
+        end)
     end)
 end)

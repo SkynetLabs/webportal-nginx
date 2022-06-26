@@ -6,10 +6,13 @@ include /etc/nginx/conf.d/include/init-optional-variables;
 location / {
     rewrite_by_lua_block {
         local skynet_account = require("skynet.account")
+        local utils = require("utils")
 
-        if skynet_account.accounts_disabled() and skynet_account.should_redirect_for_disabled_accounts() then
-            local utils = require("utils")
-            return ngx.redirect(utils.getenv("DISABLED_ACCOUNTS_REDIRECT_URL"))
+        if skynet_account.should_redirect_accounts() then
+            local redirect_url = utils.getenv("ACCOUNTS_REDIRECT_URL") or (ngx.var.scheme .. "://" .. ngx.var.skynet_portal_domain)
+            local redirect_code = utils.getenv("ACCOUNTS_REDIRECT_STATUS_CODE", "integer") or 302
+
+            return ngx.redirect(redirect_url, redirect_code)
         end
     }
 
