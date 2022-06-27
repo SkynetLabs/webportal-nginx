@@ -69,6 +69,7 @@
                 <a
                   href="https://account.${PORTAL_DOMAIN}/auth/login"
                   class="text-[#00C65E]"
+                  id="login-btn"
                   >click here</a
                 >.
               </p>
@@ -78,11 +79,17 @@
       </div>
     </div>
     <script>
+      const encodedReturnTo = encodeURIComponent(window.location.href);
+      const portalLoginUrl = `https://account.${PORTAL_DOMAIN}/auth/login?return_to=${encodedReturnTo}`
+
+      // add return_to url to click here button
+      document.getElementById("login-btn").href = portalLoginUrl;
+
       // prevent auto redirect if not on portal domain to allow local development
       if (window.location.hostname.endsWith("${PORTAL_DOMAIN}")) {
         setTimeout(function redirect() {
           const encodedReturnTo = encodeURIComponent(window.location.href);
-          window.location.href = `https://account.${PORTAL_DOMAIN}/auth/login?return_to=${encodedReturnTo}`;
+          window.location.href = portalLoginUrl;
         }, 5000); // redirect after 5 seconds
       }
     </script>
