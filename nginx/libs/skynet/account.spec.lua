@@ -43,19 +43,23 @@ end)
 
 describe("accounts_disabled", function()
     before_each(function()
-        stub(skynet_account, "accounts_enabled")
+        stub(skynet_modules, "is_enabled")
     end)
 
     after_each(function()
-        mock.revert(skynet_account)
+        mock.revert(skynet_modules)
     end)
 
-    it("negates accounts_enabled method", function()
-        skynet_account.accounts_enabled.returns(true)
-        assert.is_false(skynet_account.accounts_disabled())
+    it("returns true when accounts are disabled", function()
+        skynet_modules.is_enabled.on_call_with("a").returns(false)
 
-        skynet_account.accounts_enabled.returns(false)
         assert.is_true(skynet_account.accounts_disabled())
+    end)
+
+    it("returns false when accounts are enabled", function()
+        skynet_modules.is_enabled.on_call_with("a").returns(true)
+
+        assert.is_false(skynet_account.accounts_disabled())
     end)
 end)
 
@@ -75,7 +79,7 @@ describe("should_redirect_accounts", function()
             skynet_account.accounts_enabled.returns(true)
         end)
 
-        it("should return false for not existing env var", function()
+        it("should return false for non-existing env var", function()
             os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns(nil)
 
             assert.is_false(skynet_account.should_redirect_accounts())
@@ -87,7 +91,7 @@ describe("should_redirect_accounts", function()
             assert.is_false(skynet_account.should_redirect_accounts())
         end)
 
-        it("should return true for blank env var", function()
+        it("should return true for configured env var", function()
             os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns("https://siasky.net/siasky-account-notice")
 
             assert.is_true(skynet_account.should_redirect_accounts())
@@ -101,6 +105,12 @@ describe("should_redirect_accounts", function()
 
         it("should return true despite there not being a redirect URL configured", function()
             os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns(nil)
+
+            assert.is_true(skynet_account.should_redirect_accounts())
+        end)
+
+        it("should return true when ACCOUNTS_REDIRECT_URL being configured", function()
+            os.getenv.on_call_with("ACCOUNTS_REDIRECT_URL").returns("https://siasky.net/siasky-account-notice")
 
             assert.is_true(skynet_account.should_redirect_accounts())
         end)
