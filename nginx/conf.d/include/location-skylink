@@ -2,9 +2,23 @@ include /etc/nginx/conf.d/include/cors;
 
 limit_conn downloads_by_ip 100; # ddos protection: max 100 downloads at a time
 
-# ensure that skylink that we pass around is base64 encoded (transform base32 encoded ones)
-# this is important because we want only one format in cache keys and logs
-set_by_lua_block $skylink { return require("skynet.skylink").parse(ngx.var.skylink) }
+set_by_lua_block $skylink {
+    local skynet_skylink = require("skynet.skylink")
+
+    -- validate the skylink before parsing
+    local invalid_skylink = skynet_skylink.validate(ngx.var.skylink)
+
+    -- return 400 response with validation error message when skylink is invalid
+    if invalid_skylink ~= nil then
+        ngx.status = ngx.HTTP_BAD_REQUEST
+        ngx.header["content-type"] = "text/plain"
+        ngx.say(invalid_skylink)
+        return ngx.exit(ngx.status)
+    end
+
+    -- parse the skylink and always return base64 encoded (encoding consistency)
+    return skynet_skylink.parse(ngx.var.skylink)
+}
 
 # default download rate to unlimited
 set $limit_rate 0;
