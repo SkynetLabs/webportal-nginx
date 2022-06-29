@@ -10,15 +10,7 @@ set_by_lua_block $skylink { return require("skynet.skylink").parse(ngx.var.skyli
 set $limit_rate 0;
 
 access_by_lua_block {
-    local skynet_skylink = require("skynet.skylink")
-
-    -- validate the skylink before parsing
-    local invalid_skylink = skynet_skylink.validate(ngx.var.skylink)
-
-    -- exit with 400 Bad Request when skylink is invalid
-    if invalid_skylink ~= nil then
-        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
-    end
+    return ngx.exit(ngx.HTTP_UNAUTHORIZED)
 
     if require("skynet.account").accounts_enabled() then
         -- check if portal is in authenticated only mode
