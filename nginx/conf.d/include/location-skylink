@@ -17,7 +17,7 @@ access_by_lua_block {
 
     -- exit with 400 Bad Request when skylink is invalid
     if invalid_skylink ~= nil then
-        return ngx.exit(ngx.HTTP_BAD_REQUEST)
+        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
     if require("skynet.account").accounts_enabled() then
