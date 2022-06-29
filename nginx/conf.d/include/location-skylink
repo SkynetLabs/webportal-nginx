@@ -15,12 +15,9 @@ access_by_lua_block {
     -- validate the skylink before parsing
     local invalid_skylink = skynet_skylink.validate(ngx.var.skylink)
 
-    -- return 400 response with validation error message when skylink is invalid
+    -- exit with 400 Bad Request when skylink is invalid
     if invalid_skylink ~= nil then
-        ngx.status = ngx.HTTP_BAD_REQUEST
-        ngx.header["content-type"] = "text/plain"
-        ngx.say(invalid_skylink)
-        return ngx.exit(ngx.status)
+        return ngx.exit(ngx.HTTP_BAD_REQUEST)
     end
 
     if require("skynet.account").accounts_enabled() then
