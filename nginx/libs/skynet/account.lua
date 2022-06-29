@@ -42,6 +42,14 @@ function _M.get_auth_headers()
     return headers
 end
 
+-- check whether there is a redirect URL configured for "account" subdomain.
+function _M.should_redirect_accounts()
+    local utils = require('utils')
+    local has_redirect_url = utils.getenv("ACCOUNTS_REDIRECT_URL") ~= nil
+
+    return has_redirect_url or _M.accounts_disabled()
+end
+
 -- handle request exit when access to portal should be restricted to authenticated users only
 function _M.exit_access_unauthorized()
     return ngx.exit(ngx.HTTP_UNAUTHORIZED)
@@ -59,6 +67,10 @@ function _M.accounts_enabled()
     local skynet_modules = require("skynet.modules")
 
     return skynet_modules.is_enabled("a")
+end
+
+function _M.accounts_disabled()
+    return not _M.accounts_enabled()
 end
 
 function _M.get_account_limits()
