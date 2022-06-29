@@ -11,7 +11,7 @@ set $limit_rate 0;
 
 access_by_lua_block {
     if true then
-        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
+        return require("skynet.account").exit_access_unauthorized()
     end
 
     if require("skynet.account").accounts_enabled() then
