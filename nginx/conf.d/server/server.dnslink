@@ -1,4 +1,5 @@
 include /etc/nginx/conf.d/include/init-optional-variables;
+include /etc/nginx/conf.d/include/error-pages;
 
 location / {
     set $skylink "";
