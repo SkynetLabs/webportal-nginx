@@ -16,46 +16,46 @@ location / {
         end
     }
 
-    proxy_pass http://dashboard:9000;
+    proxy_pass http://10.10.10.85:9000; # dashboard service
 }
 
 location /health {
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /stripe/webhook {
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /api {
     rewrite /api/(.*) /$1 break;
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /api/register {
     include /etc/nginx/conf.d/include/cors;
 
     rewrite /api/(.*) /$1 break;
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /api/user/pubkey/register {
     include /etc/nginx/conf.d/include/cors;
 
     rewrite /api/(.*) /$1 break;
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /api/login {
     include /etc/nginx/conf.d/include/cors;
 
     rewrite /api/(.*) /$1 break;
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
 
 location /api/logout {
     include /etc/nginx/conf.d/include/cors;
 
     rewrite /api/(.*) /$1 break;
-    proxy_pass http://accounts:3000;
+    proxy_pass http://10.10.10.70:3000; # accounts service
 }
