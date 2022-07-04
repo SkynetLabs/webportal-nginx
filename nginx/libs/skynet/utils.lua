@@ -27,4 +27,45 @@ function _M.authorization_header()
     return "Basic " .. content
 end
 
+function _M.should_block_public_access()
+    local is_public_access_denied = utils.getenv("DENY_PUBLIC_ACCESS", "boolean") == true
+    local is_external_request = _M.is_internal_request() == false
+
+    return is_public_access_denied and is_external_request
+end
+
+-- utility that returns information whether the request originates from
+-- the host machine (internal) or is it an external request
+function _M.is_internal_request()
+    local ipmatcher = require("resty.ipmatcher")
+    local ipmatcher_private_network = ipmatcher.new({
+        "127.0.0.0/8", -- host network
+        "10.0.0.0/8", -- private network
+        "172.16.0.0/12", -- private network
+        "192.168.0.0/16", -- private network
+    })
+
+    -- if the request comes from private network then it is considered internal
+    if ipmatcher_private_network:match(ngx.var.remote_addr) then
+        return true
+    end
+
+    -- if there is no cached public addr, fetch it to speed up subsequent comparisons
+    if ngx.shared.config.get("public_addr") == nil then
+        local httpc = require("resty.http").new()
+        local res, err = httpc:request_uri("http://whatismyip.akamai.com")
+
+        -- report error in case whatismyip.akamai.com failed
+        if err or (res and res.status ~= ngx.HTTP_OK) then
+            local error_response = err or ("[HTTP " .. res.status .. "] " .. res.body)
+            ngx.log(ngx.ERR, "Failed request to whatismyip.akamai.com: ", error_response)
+        elseif res and res.status == ngx.HTTP_OK then
+            ngx.shared.config.set("public_addr", res.body)
+        end
+    end
+
+    -- if the request comes from the server own ip then it is considered internal
+    return ngx.var.remote_addr == ngx.shared.config.get("public_addr")
+end
+
 return _M
