@@ -10,7 +10,9 @@ set_by_lua_block $skylink { return require("skynet.skylink").parse(ngx.var.skyli
 set $limit_rate 0;
 
 access_by_lua_block {
-    if require("skynet.utils").should_block_public_access() then
+    local skynet_access = require("skynet.access")
+
+    if skynet_access.should_block_public_access() then
         ngx.status = ngx.HTTP_FORBIDDEN
         ngx.header["content-type"] = "text/plain"
         ngx.say("Server public access denied")
