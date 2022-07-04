@@ -5,6 +5,7 @@ WORKDIR /
 RUN apt-get update && apt-get --no-install-recommends -y install bc=1.* && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     luarocks install lua-resty-http && \
+    luarocks install lua-resty-ipmatcher && \
     luarocks install hasher
 
 # reload nginx every 6 hours (for reloading certificates)
