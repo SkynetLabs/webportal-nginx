@@ -28,7 +28,7 @@ function _M.authorization_header()
 end
 
 function _M.get_public_addr()
-    local public_addr = ngx.shared.config.get("public_addr")
+    local public_addr = ngx.shared.config:get("public_addr")
 
     -- return public addr if it exists in cache
     if public_addr then
@@ -45,7 +45,7 @@ function _M.get_public_addr()
         ngx.log(ngx.ERR, "Failed request to whatismyip.akamai.com: ", error_response)
     elseif res and res.status == ngx.HTTP_OK then
         -- whatismyip.akamai.com responds with the ip address as plain text body
-        ngx.shared.config.set("public_addr", res.body)
+        ngx.shared.config:set("public_addr", res.body)
         return res.body
     end
 
