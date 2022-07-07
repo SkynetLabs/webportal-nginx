@@ -15,13 +15,6 @@ function _M.match_allowed_internal_networks(ip_addr)
     return ipmatcher_private_network:match(ip_addr)
 end
 
-function _M.should_block_public_access()
-    local is_public_access_denied = utils.getenv("DENY_PUBLIC_ACCESS", "boolean") == true
-    local is_external_request = _M.is_internal_request() == false
-
-    return is_public_access_denied and is_external_request
-end
-
 -- utility that returns information whether the request originates from
 -- the host machine (internal) or is it an external request
 function _M.is_internal_request()
@@ -31,7 +24,14 @@ function _M.is_internal_request()
     end
 
     -- if the request comes from the server own address then it is considered internal
-    return ngx.var.remote_addr == skynet_utils.get_public_addr()
+    return ngx.var.remote_addr == utils.getenv("SERVER_IP")
+end
+
+-- function that decides whether the request should be blocked or not
+-- based on portal settings and request properties
+function _M.should_block_public_access()
+    -- if portal should deny public access and the request is not internal then block it
+    return utils.getenv("DENY_PUBLIC_ACCESS", "boolean") and _M.is_internal_request() == false
 end
 
 return _M

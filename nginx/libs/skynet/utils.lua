@@ -27,31 +27,4 @@ function _M.authorization_header()
     return "Basic " .. content
 end
 
-function _M.get_public_addr()
-    local public_addr = ngx.shared.config:get("public_addr")
-
-    -- return public addr if it exists in cache
-    if public_addr then
-        return public_addr
-    end
-
-    -- fetch public address if it is not cached yet
-    local httpc = require("resty.http").new()
-    local res, err = httpc:request_uri("http://whatismyip.akamai.com")
-
-    -- report error in case whatismyip.akamai.com failed
-    if err or (res and res.status ~= ngx.HTTP_OK) then
-        local error_response = err or ("[HTTP " .. res.status .. "] " .. res.body)
-        ngx.log(ngx.ERR, "Failed request to whatismyip.akamai.com: ", error_response)
-    elseif res and res.status == ngx.HTTP_OK then
-        ngx.log(ngx.ERR, ngx.shared.config:get("public_addr"))
-
-        -- whatismyip.akamai.com responds with the ip address as plain text body
-        ngx.shared.config:set("public_addr", res.body)
-        return res.body
-    end
-
-    return nil
-end
-
 return _M
