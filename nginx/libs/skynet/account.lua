@@ -61,7 +61,7 @@ end
 -- handle request exit when access to portal should be restricted to subscription users only
 function _M.exit_access_forbidden()
     return skynet_utils.exit(
-        ngx.HTTP_FORBIDDEN, 
+        ngx.HTTP_FORBIDDEN,
         "Portal operator restricted access to users with active subscription only"
     )
 end
