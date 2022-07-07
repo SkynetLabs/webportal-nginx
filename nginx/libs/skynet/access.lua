@@ -1,6 +1,8 @@
 local _M = {}
 
+-- imports
 local utils = require("utils")
+local skynet_utils = require("skynet.utils")
 
 function _M.match_allowed_internal_networks(ip_addr)
     local ipmatcher = require("resty.ipmatcher")
@@ -23,10 +25,7 @@ end
 
 -- handle request exit when access to portal should deny public access
 function _M.exit_public_access_forbidden(message)
-    ngx.status = ngx.HTTP_FORBIDDEN
-    ngx.header["content-type"] = "text/plain"
-    ngx.say(message or "Server public access denied")
-    return ngx.exit(ngx.status)
+    return skynet_utils.exit(ngx.HTTP_FORBIDDEN, "Server public access denied")
 end
 
 return _M

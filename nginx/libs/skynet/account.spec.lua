@@ -1,21 +1,40 @@
 -- luacheck: ignore os
 local skynet_account = require('skynet.account')
 local skynet_modules = require('skynet.modules')
+local skynet_utils = require('skynet.utils')
 
 describe("exit_access_unauthorized", function()
     before_each(function()
-        stub(ngx, "exit")
+        stub(skynet_utils, "exit")
     end)
 
     after_each(function()
-        mock.revert(ngx)
+        mock.revert(skynet_utils)
     end)
 
     it("should call ngx.exit with status code 401", function()
         skynet_account.exit_access_unauthorized()
 
         -- expect exit called with ngx.HTTP_UNAUTHORIZED code 401
-        assert.stub(ngx.exit).was_called_with(401)
+        assert.stub(skynet_utils.exit).was_called_with(401)
+    end)
+end)
+
+describe("exit_access_forbidden", function()
+    before_each(function()
+        stub(skynet_utils, "exit")
+    end)
+
+    after_each(function()
+        mock.revert(skynet_utils)
+    end)
+
+    it("should call exit with status code 403 and proper message", function()
+        skynet_account.exit_access_forbidden()
+
+        assert.stub(skynet_utils.exit).was_called_with(
+            403, "Portal operator restricted access to users with active subscription only"
+        )
     end)
 end)
 

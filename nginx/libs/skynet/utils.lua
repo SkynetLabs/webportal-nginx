@@ -27,4 +27,13 @@ function _M.authorization_header()
     return "Basic " .. content
 end
 
+function _M.exit(code, message)
+    ngx.status = code
+    if message then
+        ngx.header["content-type"] = "text/plain"
+        ngx.say(message)
+    end
+    return ngx.exit(ngx.status)
+end
+
 return _M

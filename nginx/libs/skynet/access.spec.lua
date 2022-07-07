@@ -1,4 +1,5 @@
 local skynet_access = require("skynet.access")
+local skynet_utils = require("skynet.utils")
 
 describe("match_allowed_internal_networks", function()
     it("should return true for addresses from 127.0.0.0/8 host network", function()
@@ -57,17 +58,16 @@ end)
 
 describe("exit_public_access_forbidden", function()
     before_each(function()
-        stub(ngx, "exit")
+        stub(skynet_utils, "exit")
     end)
 
     after_each(function()
-        mock.revert(ngx)
+        mock.revert(skynet_utils)
     end)
 
-    it("should call ngx.exit with status code 403", function()
+    it("should call exit with status code 403 and proper message", function()
         skynet_access.exit_public_access_forbidden()
 
-        -- expect exit called with ngx.HTTP_FORBIDDEN code 403
-        assert.stub(ngx.exit).was_called_with(403)
+        assert.stub(skynet_utils.exit).was_called_with(403, "Server public access denied")
     end)
 end)
