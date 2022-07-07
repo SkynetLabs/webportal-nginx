@@ -54,3 +54,20 @@ describe("match_allowed_internal_networks", function()
         assert.is_false(skynet_access.match_allowed_internal_networks("212.32.41.12"))
     end)
 end)
+
+describe("exit_public_access_forbidden", function()
+    before_each(function()
+        stub(ngx, "exit")
+    end)
+
+    after_each(function()
+        mock.revert(ngx)
+    end)
+
+    it("should call ngx.exit with status code 403", function()
+        skynet_access.exit_public_access_forbidden()
+
+        -- expect exit called with ngx.HTTP_FORBIDDEN code 403
+        assert.stub(ngx.exit).was_called_with(403)
+    end)
+end)
