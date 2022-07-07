@@ -1,5 +1,4 @@
 include /etc/nginx/conf.d/include/proxy-pass-internal;
-include /etc/nginx/conf.d/include/portal-access-check;
 
 # variable definititions - we need to define a variable to be able to access it in lua by ngx.var.something
 set $skylink ''; # placeholder for the raw 46 bit skylink
@@ -12,6 +11,16 @@ access_by_lua_block {
         ngx.header["content-type"] = "text/plain"
         ngx.say("Server public access denied")
         return ngx.exit(ngx.status)
+    end
+
+    -- check portal access rules and exit if access is restricted
+    if require("skynet.account").is_access_unauthorized() then
+        return require("skynet.account").exit_access_unauthorized()
+    end
+
+    -- check if portal is in subscription only mode
+    if require("skynet.account").is_access_forbidden() then
+        return require("skynet.account").exit_access_forbidden()
     end
 }
 
