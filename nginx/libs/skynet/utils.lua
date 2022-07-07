@@ -27,6 +27,9 @@ function _M.authorization_header()
     return "Basic " .. content
 end
 
+-- cannot test this function since busted runs in context that
+-- does not allow ngx.status access and it cannot be mocked too
+-- luacov: disable
 function _M.exit(code, message)
     ngx.status = code
     if message then
@@ -35,5 +38,6 @@ function _M.exit(code, message)
     end
     return ngx.exit(ngx.status)
 end
+-- luacov: enable
 
 return _M
