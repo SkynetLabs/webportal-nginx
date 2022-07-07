@@ -24,7 +24,7 @@ function _M.should_block_public_access()
 end
 
 -- handle request exit when access to portal should deny public access
-function _M.exit_public_access_forbidden(message)
+function _M.exit_public_access_forbidden()
     return skynet_utils.exit(ngx.HTTP_FORBIDDEN, "Server public access denied")
 end
 
