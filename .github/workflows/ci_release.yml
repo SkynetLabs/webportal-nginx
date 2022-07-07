@@ -31,6 +31,7 @@ jobs:
       - name: Install Dependencies
         run: |
           luarocks install lua-resty-http
+          luarocks install lua-resty-ipmatcher
           luarocks install hasher
           luarocks install busted
           luarocks install luacov
