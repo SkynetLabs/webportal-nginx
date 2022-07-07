@@ -1,7 +1,6 @@
 local _M = {}
 
 local utils = require("utils")
-local skynet_utils = require("skynet.utils")
 
 function _M.match_allowed_internal_networks(ip_addr)
     local ipmatcher = require("resty.ipmatcher")
