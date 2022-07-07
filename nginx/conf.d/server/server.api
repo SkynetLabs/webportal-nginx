@@ -296,10 +296,7 @@ location /skynet/tus {
 
         -- check if portal should be blocking public access to api
         if skynet_access.should_block_public_access() then
-            ngx.status = ngx.HTTP_FORBIDDEN
-            ngx.header["content-type"] = "text/plain"
-            ngx.say("Server public access denied")
-            return ngx.exit(ngx.status)
+            return skynet_access.exit_public_access_forbidden()
         end
 
         if skynet_account.accounts_enabled() then
@@ -462,10 +459,7 @@ location /skynet/trustless/basesector {
 
         -- check if portal should be blocking public access to api
         if skynet_access.should_block_public_access() then
-            ngx.status = ngx.HTTP_FORBIDDEN
-            ngx.header["content-type"] = "text/plain"
-            ngx.say("Server public access denied")
-            return ngx.exit(ngx.status)
+            return skynet_access.exit_public_access_forbidden()
         end
 
         if skynet_account.accounts_enabled() then

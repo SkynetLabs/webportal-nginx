@@ -13,10 +13,7 @@ access_by_lua_block {
     local skynet_access = require("skynet.access")
 
     if skynet_access.should_block_public_access() then
-        ngx.status = ngx.HTTP_FORBIDDEN
-        ngx.header["content-type"] = "text/plain"
-        ngx.say("Server public access denied")
-        return ngx.exit(ngx.status)
+        return skynet_access.exit_public_access_forbidden()
     end
 
     if require("skynet.account").accounts_enabled() then

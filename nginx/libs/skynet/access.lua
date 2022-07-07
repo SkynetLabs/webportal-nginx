@@ -21,4 +21,12 @@ function _M.should_block_public_access()
     return utils.getenv("DENY_PUBLIC_ACCESS", "boolean") and not _M.match_allowed_internal_networks(ngx.var.remote_addr)
 end
 
+-- handle request exit when access to portal should deny public access
+function _M.exit_public_access_forbidden(message)
+    ngx.status = ngx.HTTP_FORBIDDEN
+    ngx.header["content-type"] = "text/plain"
+    ngx.say(message or "Server public access denied")
+    return ngx.exit(ngx.status)
+end
+
 return _M
