@@ -12,7 +12,7 @@ access_by_lua_block {
     local skynet_access = require("skynet.access")
     local skynet_account = require("skynet.account")
 
-    if skynet_access.should_block_public_access() then
+    if skynet_access.should_block_access(ngx.var.remote_addr) then
         return skynet_access.exit_public_access_forbidden()
     end
 

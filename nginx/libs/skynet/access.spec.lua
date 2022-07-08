@@ -1,3 +1,4 @@
+local utils = require("utils")
 local skynet_access = require("skynet.access")
 local skynet_utils = require("skynet.utils")
 
@@ -53,6 +54,46 @@ describe("match_allowed_internal_networks", function()
         assert.is_false(skynet_access.match_allowed_internal_networks("198.19.0.20"))
         assert.is_false(skynet_access.match_allowed_internal_networks("169.254.1.1"))
         assert.is_false(skynet_access.match_allowed_internal_networks("212.32.41.12"))
+    end)
+end)
+
+describe("should_block_access", function()
+    local remote_addr = "127.0.0.1"
+
+    before_each(function()
+        stub(utils, "getenv")
+        stub(skynet_access, "match_allowed_internal_networks")
+    end)
+
+    after_each(function()
+        mock.revert(utils)
+        mock.revert(skynet_access)
+    end)
+
+    it("should not block access if DENY_PUBLIC_ACCESS is not set", function()
+        utils.getenv.on_call_with("DENY_PUBLIC_ACCESS").returns(nil)
+
+        assert.is_false(skynet_access.should_block_access(remote_addr))
+    end)
+
+    it("should not block access if DENY_PUBLIC_ACCESS is set to false", function()
+        utils.getenv.on_call_with("DENY_PUBLIC_ACCESS").returns(false)
+
+        assert.is_false(skynet_access.should_block_access(remote_addr))
+    end)
+
+    it("should not block access if DENY_PUBLIC_ACCESS is set to true but request is from internal network", function()
+        utils.getenv.on_call_with("DENY_PUBLIC_ACCESS").returns(true)
+        skynet_access.match_allowed_internal_networks.on_call_with(remote_addr).returns(true)
+
+        assert.is_false(skynet_access.should_block_access(remote_addr))
+    end)
+
+    it("should block access if DENY_PUBLIC_ACCESS is set to true and request is not from internal network", function()
+        utils.getenv.on_call_with("DENY_PUBLIC_ACCESS", "boolean").returns(true)
+        skynet_access.match_allowed_internal_networks.on_call_with(remote_addr).returns(false)
+
+        assert.is_true(skynet_access.should_block_access(remote_addr))
     end)
 end)
 

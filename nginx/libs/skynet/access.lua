@@ -17,10 +17,15 @@ function _M.match_allowed_internal_networks(ip_addr)
 end
 
 -- function that decides whether the request should be blocked or not
--- based on portal settings and request properties
-function _M.should_block_public_access()
-    -- if portal should deny public access and the request is not internal then block it
-    return utils.getenv("DENY_PUBLIC_ACCESS", "boolean") and not _M.match_allowed_internal_networks(ngx.var.remote_addr)
+-- based on portal settings and request properties (ngx.var.remote_addr)
+function _M.should_block_access(remote_addr)
+    -- deny public access has to be explictely set to true to block traffic
+    if utils.getenv("DENY_PUBLIC_ACCESS", "boolean") ~= true then
+        return false
+    end
+
+    -- block access only when the request does not come from allowed internal network
+    return _M.match_allowed_internal_networks(remote_addr) == false
 end
 
 -- handle request exit when access to portal should deny public access
