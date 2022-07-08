@@ -19,7 +19,7 @@ end
 -- function that decides whether the request should be blocked or not
 -- based on portal settings and request properties (ngx.var.remote_addr)
 function _M.should_block_access(remote_addr)
-    -- deny public access has to be explictely set to true to block traffic
+    -- deny public access has to be explictly set to true to block traffic
     if utils.getenv("DENY_PUBLIC_ACCESS", "boolean") ~= true then
         return false
     end
