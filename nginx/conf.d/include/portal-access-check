@@ -1,11 +1,19 @@
 access_by_lua_block {
+    local skynet_access = require("skynet.access")
+    local skynet_account = require("skynet.account")
+
+    -- check if portal should be blocking public access to api
+    if skynet_access.should_block_access(ngx.var.remote_addr) then
+        return skynet_access.exit_public_access_forbidden()
+    end
+
     -- check portal access rules and exit if access is restricted
-    if require("skynet.account").is_access_unauthorized() then
-        return require("skynet.account").exit_access_unauthorized()
+    if skynet_account.is_access_unauthorized() then
+        return skynet_account.exit_access_unauthorized()
     end
 
     -- check if portal is in subscription only mode
-    if require("skynet.account").is_access_forbidden() then
-        return require("skynet.account").exit_access_forbidden()
+    if skynet_account.is_access_forbidden() then
+        return skynet_account.exit_access_forbidden()
     end
 }
