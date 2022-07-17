@@ -4,5 +4,6 @@ include /etc/nginx/conf.d/include/ssl-settings;
 include /etc/nginx/conf.d/include/init-optional-variables;
 
 location / {
+    proxy_set_header Host $http_host;
     proxy_pass http://10.10.10.204:3000; # grafana service
 }
