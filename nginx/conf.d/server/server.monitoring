@@ -4,7 +4,6 @@ include /etc/nginx/conf.d/include/ssl-settings;
 include /etc/nginx/conf.d/include/init-optional-variables;
 
 location / {
-    large_client_header_buffers 4 128k;
     client_max_body_size 10m;
     client_body_buffer_size 128k;
     proxy_set_header Host $http_host;
