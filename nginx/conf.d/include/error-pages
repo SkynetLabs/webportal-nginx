@@ -1,0 +1,5 @@
+error_page 401 /401.html;
+location = /401.html {
+    root /etc/nginx/conf.d/pages;
+    internal;
+}
