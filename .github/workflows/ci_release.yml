@@ -24,13 +24,14 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    container: openresty/openresty:1.19.9.1-focal
+    container: openresty/openresty:1.21.4.1-focal
     steps:
       - uses: actions/checkout@v3
 
       - name: Install Dependencies
         run: |
           luarocks install lua-resty-http
+          luarocks install lua-resty-ipmatcher
           luarocks install hasher
           luarocks install busted
           luarocks install luacov

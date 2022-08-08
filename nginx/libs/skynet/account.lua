@@ -1,5 +1,8 @@
 local _M = {}
 
+-- imports
+local skynet_utils = require("skynet.utils")
+
 -- constant tier ids
 local tier_id_anonymous = 0
 local tier_id_free = 1
@@ -52,15 +55,15 @@ end
 
 -- handle request exit when access to portal should be restricted to authenticated users only
 function _M.exit_access_unauthorized()
-    return ngx.exit(ngx.HTTP_UNAUTHORIZED)
+    return skynet_utils.exit(ngx.HTTP_UNAUTHORIZED)
 end
 
 -- handle request exit when access to portal should be restricted to subscription users only
-function _M.exit_access_forbidden(message)
-    ngx.status = ngx.HTTP_FORBIDDEN
-    ngx.header["content-type"] = "text/plain"
-    ngx.say(message or "Portal operator restricted access to users with active subscription only")
-    return ngx.exit(ngx.status)
+function _M.exit_access_forbidden()
+    return skynet_utils.exit(
+        ngx.HTTP_FORBIDDEN,
+        "Portal operator restricted access to users with active subscription only"
+    )
 end
 
 function _M.accounts_enabled()

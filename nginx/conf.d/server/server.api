@@ -286,7 +286,13 @@ location /skynet/tus {
     proxy_pass http://sia:9980;
 
     access_by_lua_block {
+        local skynet_access = require("skynet.access")
         local skynet_account = require("skynet.account")
+
+        -- check if portal should be blocking public access to api
+        if skynet_access.should_block_access(ngx.var.remote_addr) then
+            return skynet_access.exit_public_access_forbidden()
+        end
 
         if skynet_account.accounts_enabled() then
             -- check if portal is in authenticated only mode
@@ -443,7 +449,13 @@ location /skynet/trustless/basesector {
     set $limit_rate 0;
 
     access_by_lua_block {
+        local skynet_access = require("skynet.access")
         local skynet_account = require("skynet.account")
+
+        -- check if portal should be blocking public access to api
+        if skynet_access.should_block_access(ngx.var.remote_addr) then
+            return skynet_access.exit_public_access_forbidden()
+        end
 
         if skynet_account.accounts_enabled() then
             -- check if portal is in authenticated only mode
