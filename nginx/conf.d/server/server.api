@@ -211,10 +211,7 @@ location /skynet/skyfile {
     include /etc/nginx/conf.d/include/portal-access-check;
 
     limit_req zone=uploads_by_ip burst=10 nodelay;
-    limit_req zone=uploads_by_ip_throttled;
-
-    limit_conn upload_conn 5;
-    limit_conn upload_conn_rl 1;
+    limit_conn upload_conn_limit 5;
 
     client_max_body_size 5000M; # make sure to limit the size of upload to a sane value
 
@@ -262,10 +259,8 @@ location /skynet/tus {
     include /etc/nginx/conf.d/include/cors-headers; # include cors headers but do not overwrite OPTIONS response
 
     limit_req zone=uploads_by_ip burst=10 nodelay;
-    limit_req zone=uploads_by_ip_throttled;
 
-    limit_conn upload_conn 5;
-    limit_conn upload_conn_rl 1;
+    limit_conn upload_conn_limit 5;
 
     # Do not limit body size in nginx, skyd will reject early on too large upload
     client_max_body_size 0;
@@ -362,10 +357,8 @@ location /skynet/pin {
     include /etc/nginx/conf.d/include/portal-access-check;
 
     limit_req zone=uploads_by_ip burst=10 nodelay;
-    limit_req zone=uploads_by_ip_throttled;
 
-    limit_conn upload_conn 5;
-    limit_conn upload_conn_rl 1;
+    limit_conn upload_conn_limit 5;
 
     proxy_set_header User-Agent: Sia-Agent;
     proxy_pass http://sia:9980$uri?siapath=$dir1/$dir2/$dir3&$args;
@@ -449,7 +442,7 @@ location /skynet/trustless/basesector {
     gzip_types *;
     gzip_comp_level 1;
 
-    limit_conn downloads_by_ip 100; # ddos protection: max 100 downloads at a time
+    limit_conn download_conn_limit 100; # ddos protection: max 100 downloads at a time
 
     # default download rate to unlimited
     set $limit_rate 0;
