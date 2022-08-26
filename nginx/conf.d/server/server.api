@@ -443,6 +443,12 @@ location ~ "^/file/(([a-zA-Z0-9-_]{46}|[a-z0-9]{55})(/.*)?)$" {
 location /skynet/trustless/basesector {
     include /etc/nginx/conf.d/include/cors;
 
+    # enable gzip for all content types but keep it on default level for minimal cpu strain
+    # because this endpoint does not set content type based on the actual content so we cannot
+    # limit it only to text files so files like videos and images will still be processed
+    gzip_types *;
+    gzip_comp_level 1;
+
     limit_conn downloads_by_ip 100; # ddos protection: max 100 downloads at a time
 
     # default download rate to unlimited
