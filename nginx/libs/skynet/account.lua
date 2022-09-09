@@ -11,8 +11,8 @@ local tier_id_free = 1
 local anon_limits = {
     ["tierID"] = tier_id_anonymous,
     ["tierName"] = "anonymous",
-    ["upload"] = 655360,
-    ["download"] = 655360,
+    ["upload"] = 5242880,
+    ["download"] = 5242880,
     ["maxUploadSize"] = 1073741824,
     ["registry"] = 250
 }
