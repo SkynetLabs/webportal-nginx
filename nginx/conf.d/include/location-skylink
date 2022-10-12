@@ -27,13 +27,13 @@ access_by_lua_block {
         if skynet_account.is_access_forbidden() then
             return skynet_account.exit_access_forbidden()
         end
-
-        -- get account limits of currently authenticated user
-        local limits = skynet_account.get_account_limits()
-
-        -- apply download speed limit
-        ngx.var.limit_rate = limits.download
     end
+
+    -- get account limits of currently authenticated user
+    local limits = skynet_account.get_account_limits()
+
+    -- apply download speed limit
+    ngx.var.limit_rate = limits.download
 }
 
 limit_rate_after 512k;

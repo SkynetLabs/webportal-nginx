@@ -81,8 +81,8 @@ function _M.get_account_limits()
     local utils = require('utils')
     local auth_headers = _M.get_auth_headers()
 
-    -- simple case of anonymous request - none of available auth headers exist
-    if utils.is_table_empty(auth_headers) then
+    -- simple case of anonymous request - none of available auth headers exist or accounts are not enabled
+    if utils.is_table_empty(auth_headers) or _M.accounts_disabled() then
         return anon_limits
     end
 
