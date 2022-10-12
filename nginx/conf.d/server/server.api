@@ -187,14 +187,14 @@ location /skynet/registry/subscription {
             if skynet_account.is_access_forbidden() then
                 return skynet_account.exit_access_forbidden()
             end
-
-            -- get account limits of currently authenticated user
-            local limits = skynet_account.get_account_limits()
-
-            -- apply bandwidth limit and notification delay
-            ngx.var.bandwidthlimit = limits.download
-            ngx.var.notificationdelay = limits.registry
         end
+
+        -- get account limits of currently authenticated user
+        local limits = skynet_account.get_account_limits()
+
+        -- apply bandwidth limit and notification delay
+        ngx.var.bandwidthlimit = limits.download
+        ngx.var.notificationdelay = limits.registry
     }
 
     proxy_set_header User-Agent: Sia-Agent;
@@ -299,13 +299,13 @@ location /skynet/tus {
             if skynet_account.is_access_forbidden() then
                 return skynet_account.exit_access_forbidden()
             end
-
-            -- get account limits of currently authenticated user
-            local limits = skynet_account.get_account_limits()
-
-            -- apply upload size limits
-            ngx.req.set_header("SkynetMaxUploadSize", limits.maxUploadSize)
         end
+
+        -- get account limits of currently authenticated user
+        local limits = skynet_account.get_account_limits()
+
+        -- apply upload size limits
+        ngx.req.set_header("SkynetMaxUploadSize", limits.maxUploadSize)
     }
 
     # extract skylink from base64 encoded upload metadata and assign to a proper header
@@ -466,13 +466,13 @@ location /skynet/trustless/basesector {
             if skynet_account.is_access_forbidden() then
                 return skynet_account.exit_access_forbidden()
             end
-
-            -- get account limits of currently authenticated user
-            local limits = skynet_account.get_account_limits()
-
-            -- apply download speed limit
-            ngx.var.limit_rate = limits.download
         end
+
+        -- get account limits of currently authenticated user
+        local limits = skynet_account.get_account_limits()
+
+        -- apply download speed limit
+        ngx.var.limit_rate = limits.download
     }
 
     limit_rate_after 512k;
