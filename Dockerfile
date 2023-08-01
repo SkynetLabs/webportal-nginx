@@ -1,4 +1,4 @@
-FROM openresty/openresty:1.21.4.1-focal
+FROM openresty/openresty:1.21.4.2-focal
 
 WORKDIR /
 
